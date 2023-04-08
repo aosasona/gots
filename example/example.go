@@ -11,15 +11,16 @@ func main() {
 	type Profession string
 
 	type Person struct {
-		firstName  string
-		lastName   string     `ts:"name:last_name"`
-		age        int        `ts:"type:string"`
-		profession Profession `ts:"name:job"`
-		createdAt  time.Time  `ts:"optional:true"`
+		firstName  string `ts:"name:first_name"`
+		lastName   string `ts:"name:last_name"`
+		dob        string
+		profession Profession `ts:"name:job,optional:true"`
+		createdAt  time.Time
+		isActive   bool `ts:"name:is_active"`
 	}
 
-	type NestedStruct struct {
-		collectionName string
+	type Collection struct {
+		collectionName string `ts:"name:name"`
 		people         []Person
 	}
 
@@ -30,6 +31,18 @@ func main() {
 	// registering a 'single' type
 	err := ts.Register(*new(Profession))
 	if err != nil {
-		log.Fatalf("error: %s", err.Error())
+		log.Fatalf("error: %s\n", err.Error())
+	}
+
+	// registering a normal interface
+	err = ts.Register(Person{})
+	if err != nil {
+		log.Fatalf("error: %s\n", err.Error())
+	}
+
+	// registering a nested interface
+	err = ts.Register(Collection{})
+	if err != nil {
+		log.Fatalf("error: %s\n", err.Error())
 	}
 }
