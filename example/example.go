@@ -20,28 +20,36 @@ func main() {
 	}
 
 	type Collection struct {
-		collectionName string `ts:"name:name"`
-		people         []Person
+		collectionName string   `ts:"name:name"`
+		people         []Person // an array of another struct
+		lead           Person
 	}
 
 	ts := gots.New(gots.Config{
-		Enabled: true,
+		Enabled:           true,           // you can use this to disable generation
+		OutputFile:        "./index.d.ts", // this is where your generated file will be saved
+		UseTypeForObjects: false,          // if you want to use `type X = ...` instead of `interface X ...`
 	})
 
-	// registering a 'single' type
-	err := ts.Register(*new(Profession))
-	if err != nil {
-		log.Fatalf("error: %s\n", err.Error())
-	}
+	// // registering a 'single' type
+	// err := ts.Register(*new(Profession))
+	// if err != nil {
+	// 	log.Fatalf("error: %s\n", err.Error())
+	// }
+	//
+	// // registering a normal interface
+	// err = ts.Register(Person{})
+	// if err != nil {
+	// 	log.Fatalf("error: %s\n", err.Error())
+	// }
+	//
+	// // registering a nested interface
+	// err = ts.Register(Collection{})
+	// if err != nil {
+	// 	log.Fatalf("error: %s\n", err.Error())
+	// }
 
-	// registering a normal interface
-	err = ts.Register(Person{})
-	if err != nil {
-		log.Fatalf("error: %s\n", err.Error())
-	}
-
-	// registering a nested interface
-	err = ts.Register(Collection{})
+	err := ts.Register(*new(Profession), Person{}, Collection{})
 	if err != nil {
 		log.Fatalf("error: %s\n", err.Error())
 	}

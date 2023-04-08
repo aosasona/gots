@@ -24,9 +24,9 @@ type gots struct {
 }
 
 type Config struct {
-	Enabled   bool
-	OutputDir string
-	Overwrite bool
+	Enabled           bool
+	OutputFile        string
+	UseTypeForObjects bool
 }
 
 type parsedTag struct {
@@ -41,21 +41,28 @@ func New(config Config) *gots {
 	}
 }
 
-func (*gots) Register(sources ...any) error {
+func (g *gots) Register(sources ...any) error {
+	if !g.config.Enabled {
+		return nil
+	}
+
 	if len(sources) == 0 {
 		return errors.New(ERR_NO_source)
 	}
 
 	var output string
-
 	for _, src := range sources {
 		reflectType := reflect.TypeOf(src)
 
 		if reflectType.Kind() == reflect.Struct {
-			output = toObjectType(reflectType)
-			output = fmt.Sprintf("interface %s %s;", reflectType.Name(), output)
+			prefix := "export interface %s"
+			if g.config.UseTypeForObjects {
+				prefix = "export type %s ="
+			}
+
+			output += fmt.Sprintf("%s %s;\n\n", fmt.Sprintf(prefix, reflectType.Name()), toObjectType(reflectType))
 		} else {
-			output = toSingleType(reflectType)
+			output += fmt.Sprintf("export %s\n\n", toSingleType(reflectType))
 		}
 	}
 
@@ -75,7 +82,7 @@ func toObjectType(src reflect.Type) string {
 		parsedTags := parseFieldStructTag(field)
 		mappedType := getMappedType(field.Type)
 
-		fields = append(fields, makeTSInterfaceString(field.Name, mappedType, parsedTags))
+		fields = append(fields, makeTSInterfaceString(&field, mappedType, parsedTags))
 	}
 
 	return fmt.Sprintf("{\n%s\n}", strings.Join(fields, "\n"))
@@ -124,8 +131,13 @@ func parseFieldStructTag(field reflect.StructField) parsedTag {
 	return result
 }
 
-func makeTSInterfaceString(name, mappedType string, override parsedTag) string {
-	var optionalChar string
+func makeTSInterfaceString(field *reflect.StructField, mappedType string, override parsedTag) string {
+	var (
+		optionalChar string
+		arrChar      string
+	)
+	name := field.Name
+
 	if override.Name != "" {
 		name = override.Name
 	}
@@ -138,7 +150,11 @@ func makeTSInterfaceString(name, mappedType string, override parsedTag) string {
 		optionalChar = "?"
 	}
 
-	return fmt.Sprintf("%s%s: %s;", name, optionalChar, mappedType)
+	if field.Type.Kind() == reflect.Slice {
+		arrChar = "[]"
+	}
+
+	return fmt.Sprintf("%s%s: %s%s;", name, optionalChar, mappedType, arrChar)
 }
 
 func getMappedType(src reflect.Type) string {
