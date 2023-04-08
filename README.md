@@ -10,7 +10,7 @@ gots allows you to generate TypeScript types from your selected Go types (int, s
 
 You have embedded React.js or Astro in your Go application (or you have them together in a monorepo) but now you have to define Typescript types for your Go's API responses (or other things) that you already have structs for.
 
-Fine, you may feel okay with doing that, what happens when you change one of those types in the Go mode? Now you need to update the matching TS type so you don't shoot yourself in the foot. 
+Fine, you may feel okay with doing that, what happens when you change one of those types in the Go code? Now you need to update the matching TS type so you don't shoot yourself in the foot. 
 
 But you're human, you could easily forget and that's not great now, is it? That's where this package comes in, it generates the types during run-time which means it will always be up-to-date especially if you use something like air for hot-reloading.
 
