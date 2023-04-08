@@ -1,26 +1,35 @@
-# GoTS
+![gots](./assets/gots.png)
 
-## So, what is GoTS
+## So, what is gots?
 
-GoTS allows you to generate TypeScript types from your selected Golang Structs in the Golang code itself. 
+gots allows you to generate TypeScript types from your selected Golang types (int, string, struct etc) in the code itself. 
 
 ## Why Would I do this?
 
 > Let me paint you a picture
 
-You have embedded React.js or Astro in your Golang application (or you have them together in a Monorepo) but now you have to define Typescript types for your Golang's API responses that you already have structs for.
-Fine, you may feel okay with doing that, what happens when you change one of those struct types? Now you need to update the matching TS type so you don't shoot yourself in the foot. 
-But you're human, you could easily forget and that's not good. That's where this comes in it generates the types during run-time which means it will always be up-to-date especially if you use something like air for hot-reloading.
+You have embedded React.js or Astro in your Golang application (or you have them together in a monorepo) but now you have to define Typescript types for your Golang's API responses that you already have structs for.
 
-## How do I use this?
+Fine, you may feel okay with doing that, what happens when you change one of those types in the Go mode? Now you need to update the matching TS type so you don't shoot yourself in the foot. 
 
-It's very easy to use, here's how:
+But you're human, you could easily forget and that's not good. That's where this comes in, it generates the types during run-time which means it will always be up-to-date especially if you use something like air for hot-reloading.
+
+# Installation
+You can install gots easily like this:
+```bash
+go get github.com/aosasona/gots
+```
+
+# Usage
+
+It's fairly easy to use, here's how:
 
 ```go
 package main
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/aosasona/gots"
@@ -50,13 +59,29 @@ func main() {
 		UseTypeForObjects: false,          // if you want to use `type X = ...` instead of `interface X ...`
 	})
 
-	// registering a 'single' type
+	// registering multiple types at once
 	err := ts.Register(*new(Profession), Person{}, Collection{})
 	if err != nil {
 		log.Fatalf("error: %s\n", err.Error())
 	}
 }
 ```
+
+You can pass in the following override values via struct field tags:
+- name
+- type
+- optional
+
+These give you more control over what types end up being generated. You don't need to specify these, they optional, if they are not specified the default values are inferred from the types themselves.
+
+It is safer to enable gots in development only, you can do this however way you want in your application. For example:
+
+```go
+	ts := gots.New(gots.Config{
+		Enabled: os.Getenv("ENV") == "development",
+	})
+```
+
 
 ## Contribution
 

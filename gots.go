@@ -3,7 +3,6 @@ package gots
 import (
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
 	"time"
@@ -36,6 +35,10 @@ type parsedTag struct {
 }
 
 func New(config Config) *gots {
+	if config.OutputFile == "" {
+		config.OutputFile = "index.d.ts"
+	}
+
 	return &gots{
 		config,
 	}
@@ -60,15 +63,15 @@ func (g *gots) Register(sources ...any) error {
 				prefix = "export type %s ="
 			}
 
-			output += fmt.Sprintf("%s %s;\n\n", fmt.Sprintf(prefix, reflectType.Name()), toObjectType(reflectType))
+			output += fmt.Sprintf("%s %s\n\n", fmt.Sprintf(prefix, reflectType.Name()), toObjectType(reflectType))
 		} else {
 			output += fmt.Sprintf("export %s\n\n", toSingleType(reflectType))
 		}
 	}
 
-	log.Printf("output: %s", output)
+	err := g.exportToFile(output)
 
-	return nil
+	return err
 }
 
 func toSingleType(src reflect.Type) string {
@@ -154,7 +157,7 @@ func makeTSInterfaceString(field *reflect.StructField, mappedType string, overri
 		arrChar = "[]"
 	}
 
-	return fmt.Sprintf("%s%s: %s%s;", name, optionalChar, mappedType, arrChar)
+	return fmt.Sprintf("\t%s%s: %s%s;", name, optionalChar, mappedType, arrChar)
 }
 
 func getMappedType(src reflect.Type) string {
