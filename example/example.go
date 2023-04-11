@@ -16,7 +16,8 @@ func main() {
 		dob        string
 		profession Profession `ts:"name:job,optional:true"`
 		createdAt  time.Time
-		isActive   bool `ts:"name:is_active"`
+		isActive   bool   `ts:"name:is_active"`
+		ignored    []uint `ts:"-"`
 	}
 
 	type Collection struct {

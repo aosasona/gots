@@ -16,6 +16,11 @@ func toObjectType(src reflect.Type) string {
 	for i := 0; i < src.NumField(); i++ {
 		field := src.Field(i)
 		parsedTags := parseFieldStructTag(field)
+
+		if parsedTags.Skip {
+			continue
+		}
+
 		mappedType := getMappedType(field.Type)
 
 		fields = append(fields, makeTSInterfaceString(&field, mappedType, parsedTags))

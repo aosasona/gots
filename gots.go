@@ -31,6 +31,7 @@ type parsedTag struct {
 	Name     string
 	Type     string
 	Optional bool
+	Skip     bool
 }
 
 func New(config Config) *gots {
@@ -83,6 +84,11 @@ func parseFieldStructTag(field reflect.StructField) parsedTag {
 
 	tag := field.Tag.Get("ts")
 	if tag == "" {
+		return result
+	}
+
+	if tag == "-" {
+		result.Skip = true
 		return result
 	}
 
