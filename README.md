@@ -19,7 +19,7 @@ View generated example [here](./example/index.d.ts)
 # Installation
 Just paste this in your terminal (I promise it's safe):
 ```bash
-go get github.com/aosasona/gots
+go get -u github.com/aosasona/gots
 ```
 
 # Usage
@@ -73,6 +73,8 @@ You can pass in the following override values via struct field tags:
 - name (string)
 - type (string)
 - optional (only `true` or `1` or it is ignored)
+
+It will also use the JSON tags available in your struct's fields, but the `ts` tags will always take precedence and they can be used together, eg. you could let it use the same JSON name you specified and override the type with the `ts` tag
 
 These give you more control over what types end up being generated. You don't need to specify these, they optional, if they are not specified the default values are inferred from the types themselves.
 
