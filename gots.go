@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"strings"
 )
 
 const (
@@ -25,13 +24,6 @@ type Config struct {
 	Enabled           bool
 	OutputFile        string
 	UseTypeForObjects bool
-}
-
-type parsedTag struct {
-	Name     string
-	Type     string
-	Optional bool
-	Skip     bool
 }
 
 func New(config Config) *gots {
@@ -72,52 +64,4 @@ func (g *gots) Register(sources ...any) error {
 	err := g.exportToFile(output)
 
 	return err
-}
-
-func parseFieldStructTag(field reflect.StructField) parsedTag {
-	var (
-		result    parsedTag
-		tagFields []string
-	)
-
-	tagFieldsMap := make(map[string]string)
-
-	tag := field.Tag.Get("ts")
-	if tag == "" {
-		return result
-	}
-
-	if tag == "-" {
-		result.Skip = true
-		return result
-	}
-
-	tagFields = strings.Split(tag, ",")
-	if len(tagFields) == 0 {
-		return result
-	}
-
-	for _, f := range tagFields {
-		kv := strings.Split(f, ":")
-		if len(kv) != 2 {
-			continue
-		}
-		tagFieldsMap[kv[0]] = strings.TrimSpace(kv[1])
-	}
-
-	if name, ok := tagFieldsMap["name"]; ok {
-		result.Name = name
-	}
-
-	if ty, ok := tagFieldsMap["type"]; ok {
-		result.Type = ty
-	}
-
-	if optional, ok := tagFieldsMap["optional"]; ok {
-		if optional == "true" || optional == "1" {
-			result.Optional = true
-		}
-	}
-
-	return result
 }

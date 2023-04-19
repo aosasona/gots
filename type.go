@@ -15,7 +15,7 @@ func toObjectType(src reflect.Type) string {
 	var fields []string
 	for i := 0; i < src.NumField(); i++ {
 		field := src.Field(i)
-		parsedTags := parseFieldStructTag(field)
+		parsedTags := parseTags(field)
 
 		if parsedTags.Skip {
 			continue

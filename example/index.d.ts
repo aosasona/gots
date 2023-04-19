@@ -6,32 +6,32 @@
 export type Profession = string;
 
 export interface Person {
-	first_name: string;
-	last_name: string;
-	dob: string;
-	job?: string;
-	createdAt: string;
-	is_active: boolean;
+  first_name: string;
+  last_name: string;
+  dob: string;
+  job?: string;
+  CreatedAt: string;
+  is_active: boolean;
 }
 
 export interface Collection {
-	name: string;
-	people: {
-	first_name: string;
-	last_name: string;
-	dob: string;
-	job?: string;
-	createdAt: string;
-	is_active: boolean;
-}[];
-	lead: {
-	first_name: string;
-	last_name: string;
-	dob: string;
-	job?: string;
-	createdAt: string;
-	is_active: boolean;
-};
-	tags: string[];
+  name: string;
+  whitelisted_users: {
+    first_name: string;
+    last_name: string;
+    dob: string;
+    job?: string;
+    CreatedAt: string;
+    is_active: boolean;
+  }[];
+  Lead: {
+    first_name: string;
+    last_name: string;
+    dob: string;
+    job?: string;
+    CreatedAt: string;
+    is_active: boolean;
+  };
+  collection_tags?: string[];
+  admin_id?: number;
 }
-
