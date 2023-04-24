@@ -11,22 +11,20 @@ func main() {
 	type Profession string
 
 	type Person struct {
-		FirstName  string     `json:"first_name"`
-		LastName   string     `ts:"name:last_name"`
-		DOB        string     `ts:"name:dob"`
-		Profession Profession `ts:"name:job,optional:true"`
-		CreatedAt  time.Time  // no tags
-		DeletedAt  time.Time  `json:"-"`
-		IsActive   bool       `ts:"name:is_active"`
-		Ignored    []uint     `ts:"-"`
+		firstName  string `ts:"name:first_name"`
+		lastName   string `ts:"name:last_name"`
+		dob        string
+		profession Profession `ts:"name:job,optional:true"`
+		createdAt  time.Time
+		isActive   bool   `ts:"name:is_active"`
+		ignored    []uint `ts:"-"`
 	}
 
 	type Collection struct {
-		CollectionName string   `ts:"name:name"`
-		People         []Person `json:"whitelisted_users"` // an array of another struct
-		Lead           Person
-		Tags           []string `json:"omitempty" ts:"name:collection_tags"`
-		AdminID        int      `json:"admin_id,omitempty"`
+		collectionName string   `ts:"name:name"`
+		people         []Person // an array of another struct
+		lead           Person
+		tags           []string
 	}
 
 	ts := gots.New(gots.Config{

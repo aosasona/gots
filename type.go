@@ -8,14 +8,15 @@ import (
 )
 
 func toSingleType(src reflect.Type) string {
-	return fmt.Sprintf("type %s = %s;", src.Name(), src.Kind())
+	kind := getMappedType(src)
+	return fmt.Sprintf("type %s = %s;", src.Name(), kind)
 }
 
 func toObjectType(src reflect.Type) string {
 	var fields []string
 	for i := 0; i < src.NumField(); i++ {
 		field := src.Field(i)
-		parsedTags := parseTags(field)
+		parsedTags := parseFieldStructTag(field)
 
 		if parsedTags.Skip {
 			continue
@@ -29,7 +30,11 @@ func toObjectType(src reflect.Type) string {
 	return fmt.Sprintf("{\n%s\n}", strings.Join(fields, "\n"))
 }
 
-func makeTSInterfaceString(field *reflect.StructField, mappedType string, override parsedTag) string {
+func makeTSInterfaceString(
+	field *reflect.StructField,
+	mappedType string,
+	override parsedTag,
+) string {
 	var (
 		optionalChar string
 		arrChar      string
@@ -57,7 +62,18 @@ func makeTSInterfaceString(field *reflect.StructField, mappedType string, overri
 
 func getMappedType(src reflect.Type) string {
 	switch src.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+	case reflect.Int,
+		reflect.Int8,
+		reflect.Int16,
+		reflect.Int32,
+		reflect.Int64,
+		reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Float32,
+		reflect.Float64:
 		return _NUMBER
 	case reflect.String:
 		return _STRING
