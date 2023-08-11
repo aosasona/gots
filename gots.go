@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/aosasona/gots/config"
 )
 
 const (
@@ -14,17 +16,12 @@ const (
 	_ANY     = "any"
 	_INVALID = "unknown"
 
-	ERR_NO_SOURCE = "no source specified"
+	ErrNoSource = "no source specified"
 )
 
 type gots struct {
-	config Config
-}
-
-type Config struct {
-	Enabled           bool
-	OutputFile        string
-	UseTypeForObjects bool
+	config config.Config
+	forks  []*gots
 }
 
 type parsedTag struct {
@@ -34,23 +31,50 @@ type parsedTag struct {
 	Skip     bool
 }
 
-func New(config Config) *gots {
-	if config.OutputFile == "" {
-		config.OutputFile = "index.d.ts"
+func Init(c config.Config) *gots {
+	if c.OutputFile == nil || *c.OutputFile == "" {
+		c.OutputFile = config.String("types.ts")
 	}
 
-	return &gots{
-		config,
+	return &gots{config: c}
+}
+
+// Fork takes the current gots instance and returns a new instance with the current config.
+// If replace it true, it replaces the current config with the new config entirely, else it only replaces the non-nil values.
+func (g *gots) Fork(c config.Config, replaceConfig bool) *gots {
+	if replaceConfig {
+		g.config = c
+	} else {
+		if c.Enabled != nil {
+			g.config.Enabled = c.Enabled
+		}
+
+		if c.OutputFile != nil {
+			g.config.OutputFile = c.OutputFile
+		}
+
+		if c.UseTypeForObjects != nil {
+			g.config.UseTypeForObjects = c.UseTypeForObjects
+		}
+
+		if c.Case != "" {
+			g.config.Case = c.Case
+		}
 	}
+
+	fork := &gots{config: g.config}
+	g.forks = append(g.forks, fork)
+
+	return fork
 }
 
 func (g *gots) Register(sources ...any) error {
-	if !g.config.Enabled {
+	if g.config.Enabled == nil || g.config.Enabled == config.Bool(false) {
 		return nil
 	}
 
 	if len(sources) == 0 {
-		return errors.New(ERR_NO_SOURCE)
+		return errors.New(ErrNoSource)
 	}
 
 	var output string
@@ -59,7 +83,7 @@ func (g *gots) Register(sources ...any) error {
 
 		if reflectType.Kind() == reflect.Struct {
 			prefix := "export interface %s"
-			if g.config.UseTypeForObjects {
+			if g.config.UseTypeForObjectsOrDefault() {
 				prefix = "export type %s ="
 			}
 

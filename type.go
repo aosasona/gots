@@ -30,11 +30,7 @@ func toObjectType(src reflect.Type) string {
 	return fmt.Sprintf("{\n%s\n}", strings.Join(fields, "\n"))
 }
 
-func makeTSInterfaceString(
-	field *reflect.StructField,
-	mappedType string,
-	override parsedTag,
-) string {
+func makeTSInterfaceString(field *reflect.StructField, mappedType string, override parsedTag) string {
 	var (
 		optionalChar string
 		arrChar      string
