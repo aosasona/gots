@@ -10,10 +10,19 @@ import (
 
 type JSONTagParser struct{}
 
+func withDefaultString(value string, defaultValue string) string {
+	if value == "" {
+		return defaultValue
+	}
+
+	return value
+}
+
 func (j *JSONTagParser) Parse(field reflect.StructField) (*tag.Tag, error) {
 	tag := new(tag.Tag)
-	tag.OriginalName = field.Name
-	tag.Name = field.Name
+
+	tag.OriginalName = withDefaultString(tag.OriginalName, field.Name)
+	tag.Name = withDefaultString(tag.Name, field.Name)
 
 	jsonTag := strings.TrimSpace(field.Tag.Get("json"))
 	if jsonTag == "" {
