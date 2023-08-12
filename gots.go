@@ -2,40 +2,24 @@ package gots
 
 import (
 	"errors"
-	"fmt"
-	"reflect"
-	"strings"
 
 	"github.com/aosasona/gots/config"
 	"github.com/aosasona/gots/helper"
-)
-
-const (
-	_STRING  = "string"
-	_NUMBER  = "number"
-	_BOOLEAN = "boolean"
-	_RECORD  = "Record<string, any>"
-	_ANY     = "any"
-	_INVALID = "unknown"
-
-	ErrNoSource = "no source specified"
 )
 
 type Sources []any
 
 type gots struct {
 	config  config.Config
-	output  []byte
 	sources Sources
-	forks   []*gots
 }
 
-type parsedTag struct {
-	Name     string
-	Type     string
-	Optional bool
-	Skip     bool
-}
+// Deprecated: The `New` function has been replaced with `Init` but this is kept around for backwards compatibility with v1 (will be removed in a future release)
+var (
+	New = Init
+
+	ErrNoSources = errors.New("no sources provided")
+)
 
 func Init(c config.Config) *gots {
 	if c.OutputFile == nil || *c.OutputFile == "" {
@@ -57,10 +41,6 @@ func (g *gots) Fork(c config.Config, replaceConfig bool) *gots {
 	}
 
 	fork.sources = Sources{}
-	fork.forks = []*gots{}
-	fork.output = []byte{}
-
-	g.forks = append(g.forks, fork)
 
 	return fork
 }
@@ -73,82 +53,32 @@ func (g *gots) Commit(output string) error {
 	return nil
 }
 
+func (g *gots) Generate() (string, error) {
+	if len(g.sources) == 0 {
+		return "", ErrNoSources
+	}
+	return "", nil
+}
+
+func (g *gots) Execute() error {
+	output, err := g.Generate()
+	if err != nil {
+		return err
+	}
+	return g.Commit(output)
+}
+
+// Calling Register will register the sources passed to it (doesn't replace the existing sources)
 func (g *gots) Register(sources ...any) error {
-	if g.config.Enabled == nil || !*g.config.Enabled {
+	if !g.config.EnabledOrDefault() {
 		return nil
 	}
 
 	if len(sources) == 0 {
-		return errors.New(ErrNoSource)
+		return ErrNoSources
 	}
 
-	var output string
-	for _, src := range sources {
-		reflectType := reflect.TypeOf(src)
+	g.sources = append(g.sources, sources...)
 
-		if reflectType.Kind() == reflect.Struct {
-			prefix := "export interface %s"
-			if g.config.UseTypeForObjectsOrDefault() {
-				prefix = "export type %s ="
-			}
-
-			output += fmt.Sprintf("%s %s\n\n", fmt.Sprintf(prefix, reflectType.Name()), toObjectType(reflectType))
-		} else {
-			output += fmt.Sprintf("export %s\n\n", toSingleType(reflectType))
-		}
-	}
-
-	err := g.exportToFile(output)
-
-	// TODO: call commit here too
-
-	return err
-}
-
-func parseFieldStructTag(field reflect.StructField) parsedTag {
-	var (
-		result    parsedTag
-		tagFields []string
-	)
-
-	tagFieldsMap := make(map[string]string)
-
-	tag := field.Tag.Get("ts")
-	if tag == "" {
-		return result
-	}
-
-	if tag == "-" {
-		result.Skip = true
-		return result
-	}
-
-	tagFields = strings.Split(tag, ",")
-	if len(tagFields) == 0 {
-		return result
-	}
-
-	for _, f := range tagFields {
-		kv := strings.Split(f, ":")
-		if len(kv) != 2 {
-			continue
-		}
-		tagFieldsMap[kv[0]] = strings.TrimSpace(kv[1])
-	}
-
-	if name, ok := tagFieldsMap["name"]; ok {
-		result.Name = name
-	}
-
-	if ty, ok := tagFieldsMap["type"]; ok {
-		result.Type = ty
-	}
-
-	if optional, ok := tagFieldsMap["optional"]; ok {
-		if optional == "true" || optional == "1" {
-			result.Optional = true
-		}
-	}
-
-	return result
+	return nil
 }

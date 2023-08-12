@@ -2,7 +2,7 @@
 
 ## So, what is gots?
 
-gots allows you to generate TypeScript types from your selected Go types (int, string, struct etc) in the code itself. 
+gots allows you to generate TypeScript types from your selected Go types (int, string, struct etc) in the code itself.
 
 ## Why would I do this?
 
@@ -10,16 +10,23 @@ gots allows you to generate TypeScript types from your selected Go types (int, s
 
 You have embedded React.js or Astro in your Go application (or you have them together in a monorepo) but now you have to define Typescript types for your Go's API responses (or other things) that you already have structs for.
 
-Fine, you may feel okay with doing that, what happens when you change one of those types in the Go code? Now you need to update the matching TS type so you don't shoot yourself in the foot. 
+Fine, you may feel okay with doing that, what happens when you change one of those types in the Go code? Now you need to update the matching TS type so you don't shoot yourself in the foot.
 
 But you're human, you could easily forget and that's not great now, is it? That's where this package comes in, it generates the types during run-time which means it will always be up-to-date especially if you use something like air for hot-reloading.
 
 View generated example [here](./example/index.d.ts)
 
+# Fair warning
+
+The generated types may not always match what you expect (especially in the cases of embedded structs) and might just be an `any`, to be more specific, it is advised to use the type property in the `gots` or `ts` struct tag to specify the type yourself
+Gots is not designed or built to be or ever be 100% accurate, just enough to have you setup and ready to communicate with your Go service/app/API **_safely_** in Typescript, knowing a large part of what to send and expect back.
+
 # Installation
+
 Just paste this in your terminal (I promise it's safe):
+
 ```bash
-go get github.com/aosasona/gots
+go get -u github.com/aosasona/gots
 ```
 
 # Usage
@@ -70,11 +77,13 @@ func main() {
 ```
 
 You can pass in the following override values via struct field tags:
+
 - name (string)
 - type (string)
 - optional (only `true` or `1` or it is ignored)
+- skip (only `true` or `1`, but can also simply be written like this: `gots:"-"`)
 
-These give you more control over what types end up being generated. You don't need to specify these, they optional, if they are not specified the default values are inferred from the types themselves.
+These give you more control over what types end up being generated. You don't need to specify these, they are optional, if they are not specified the default values are inferred from the types themselves.
 
 It is safer to enable gots in development only, you can do this however way you want in your application. For example:
 
@@ -85,7 +94,6 @@ ts := gots.New(gots.Config{
 })
 ...
 ```
-
 
 ## Contribution
 
