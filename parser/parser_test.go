@@ -1,4 +1,4 @@
-package gotsparser
+package parser
 
 import (
 	"reflect"
@@ -8,11 +8,11 @@ import (
 )
 
 type TestStruct struct {
-	Name        string   `ts:"name:first_name"`
-	LastName    string   `gots:"name:last_name"`
+	Name        string   `json:"fname,omitempty" ts:"name:first_name"`
+	LastName    string   `json:"last_name"`
 	Invalid     string   `gots:"name:,random_opt"`
 	Phone       string   `gots:"name:phone_number,optional:true"`
-	BMI         string   `gots:"-"`
+	BMI         string   `json:"bmi" gots:"-"`
 	NextOfKin   string   `gots:"name:next_of_kin,skip:true"`
 	Connections []string `gots:"name:connected_ids, type:Array<string>, optional:true"`
 }
@@ -41,13 +41,13 @@ func TestJSONTagParser_Parse(t *testing.T) {
 		WantErr  bool
 	}{
 		{
-			Name:   "properly parse tag using v1.0 ts tag",
+			Name:   "parse json and ts tags and make json tag the original name",
 			Source: nameField,
 			Expected: &tag.Tag{
 				OriginalName: "Name",
 				Name:         "first_name",
 				Skip:         false,
-				Optional:     false,
+				Optional:     true,
 			},
 		},
 		{
@@ -85,7 +85,7 @@ func TestJSONTagParser_Parse(t *testing.T) {
 			Source: bmiField,
 			Expected: &tag.Tag{
 				OriginalName: "BMI",
-				Name:         "BMI",
+				Name:         "bmi",
 				Skip:         true,
 				Optional:     false,
 			},

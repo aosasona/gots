@@ -107,10 +107,8 @@ func TestJSONTagParser_Parse(t *testing.T) {
 		},
 	}
 
-	parser := &JSONTagParser{}
-
 	for _, test := range tests {
-		got, err := parser.Parse(test.Source)
+		got, err := Parse(test.Source)
 		if (err != nil) != test.WantErr {
 			t.Errorf("failed to run case `%s`: unexpected error: %v", test.Name, err)
 		}

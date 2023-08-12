@@ -4,10 +4,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/aosasona/gots/helper"
 	"github.com/aosasona/gots/parser/tag"
 )
-
-type GotsTagParser struct{}
 
 func withDefaultString(value string, defaultValue string) string {
 	if value == "" {
@@ -17,13 +16,18 @@ func withDefaultString(value string, defaultValue string) string {
 	return value
 }
 
-func (g *GotsTagParser) Parse(field reflect.StructField) (*tag.Tag, error) {
+func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
 	var (
 		tag  = new(tag.Tag)
 		opts = make(map[string]string)
 	)
-	tag.OriginalName = withDefaultString(tag.OriginalName, field.Name)
-	tag.Name = withDefaultString(tag.Name, field.Name)
+
+	if len(targetTag) > 0 {
+		tag = targetTag[0]
+	} else {
+		tag.OriginalName = helper.WithDefaultString(tag.OriginalName, field.Name)
+		tag.Name = helper.WithDefaultString(tag.Name, field.Name)
+	}
 
 	gotsTag := strings.TrimSpace(field.Tag.Get("gots"))
 

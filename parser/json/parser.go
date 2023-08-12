@@ -5,24 +5,19 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/aosasona/gots/helper"
 	"github.com/aosasona/gots/parser/tag"
 )
 
-type JSONTagParser struct{}
-
-func withDefaultString(value string, defaultValue string) string {
-	if value == "" {
-		return defaultValue
-	}
-
-	return value
-}
-
-func (j *JSONTagParser) Parse(field reflect.StructField) (*tag.Tag, error) {
+func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
 	tag := new(tag.Tag)
 
-	tag.OriginalName = withDefaultString(tag.OriginalName, field.Name)
-	tag.Name = withDefaultString(tag.Name, field.Name)
+	if len(targetTag) > 0 {
+		tag = targetTag[0]
+	} else {
+		tag.OriginalName = helper.WithDefaultString(tag.OriginalName, field.Name)
+		tag.Name = helper.WithDefaultString(tag.Name, field.Name)
+	}
 
 	jsonTag := strings.TrimSpace(field.Tag.Get("json"))
 	if jsonTag == "" {
