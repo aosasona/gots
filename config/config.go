@@ -14,11 +14,8 @@ type Config struct {
 	Enabled           *bool
 	OutputFile        *string
 	UseTypeForObjects *bool
-	Case              Case
+	Case              Case // to be implemented later
 }
-
-func String(s string) *string { return &s }
-func Bool(b bool) *bool       { return &b }
 
 func (c Config) EnabledOrDefault() bool {
 	if c.Enabled == nil {
@@ -51,4 +48,34 @@ func (c Config) CaseOrDefault() Case {
 	}
 
 	return c.Case
+}
+
+func (c Config) Merge(other Config) Config {
+	enabled := c.EnabledOrDefault()
+	outputFile := c.OutputFileOrDefault()
+	useTypeForObjects := c.UseTypeForObjectsOrDefault()
+	caseOrDefault := c.CaseOrDefault()
+
+	if other.Enabled != nil {
+		enabled = *other.Enabled
+	}
+
+	if other.OutputFile != nil {
+		outputFile = *other.OutputFile
+	}
+
+	if other.UseTypeForObjects != nil {
+		useTypeForObjects = *other.UseTypeForObjects
+	}
+
+	if other.Case != "" {
+		caseOrDefault = other.Case
+	}
+
+	return Config{
+		Enabled:           &enabled,
+		OutputFile:        &outputFile,
+		UseTypeForObjects: &useTypeForObjects,
+		Case:              caseOrDefault,
+	}
 }

@@ -7,21 +7,27 @@ import (
 	"strings"
 
 	"github.com/aosasona/gots/config"
+	"github.com/aosasona/gots/helper"
 )
 
 const (
 	_STRING  = "string"
 	_NUMBER  = "number"
 	_BOOLEAN = "boolean"
+	_RECORD  = "Record<string, any>"
 	_ANY     = "any"
 	_INVALID = "unknown"
 
 	ErrNoSource = "no source specified"
 )
 
+type Sources []any
+
 type gots struct {
-	config config.Config
-	forks  []*gots
+	config  config.Config
+	output  []byte
+	sources Sources
+	forks   []*gots
 }
 
 type parsedTag struct {
@@ -33,7 +39,7 @@ type parsedTag struct {
 
 func Init(c config.Config) *gots {
 	if c.OutputFile == nil || *c.OutputFile == "" {
-		c.OutputFile = config.String("types.ts")
+		c.OutputFile = helper.String("types.ts")
 	}
 
 	return &gots{config: c}
@@ -42,34 +48,33 @@ func Init(c config.Config) *gots {
 // Fork takes the current gots instance and returns a new instance with the current config.
 // If replace it true, it replaces the current config with the new config entirely, else it only replaces the non-nil values.
 func (g *gots) Fork(c config.Config, replaceConfig bool) *gots {
+	fork := &gots{}
+
 	if replaceConfig {
-		g.config = c
+		fork.config = c
 	} else {
-		if c.Enabled != nil {
-			g.config.Enabled = c.Enabled
-		}
-
-		if c.OutputFile != nil {
-			g.config.OutputFile = c.OutputFile
-		}
-
-		if c.UseTypeForObjects != nil {
-			g.config.UseTypeForObjects = c.UseTypeForObjects
-		}
-
-		if c.Case != "" {
-			g.config.Case = c.Case
-		}
+		fork.config = g.config.Merge(c)
 	}
 
-	fork := &gots{config: g.config}
+	fork.sources = Sources{}
+	fork.forks = []*gots{}
+	fork.output = []byte{}
+
 	g.forks = append(g.forks, fork)
 
 	return fork
 }
 
+func (g *gots) AddSource(s any) {
+	g.sources = append(g.sources, s)
+}
+
+func (g *gots) Commit(output string) error {
+	return nil
+}
+
 func (g *gots) Register(sources ...any) error {
-	if g.config.Enabled == nil || g.config.Enabled == config.Bool(false) {
+	if g.config.Enabled == nil || !*g.config.Enabled {
 		return nil
 	}
 
@@ -94,6 +99,8 @@ func (g *gots) Register(sources ...any) error {
 	}
 
 	err := g.exportToFile(output)
+
+	// TODO: call commit here too
 
 	return err
 }

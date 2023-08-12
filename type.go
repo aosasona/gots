@@ -69,7 +69,9 @@ func getMappedType(src reflect.Type) string {
 		reflect.Uint32,
 		reflect.Uint64,
 		reflect.Float32,
-		reflect.Float64:
+		reflect.Float64,
+		reflect.Complex64,
+		reflect.Complex128:
 		return _NUMBER
 	case reflect.String:
 		return _STRING
@@ -77,6 +79,8 @@ func getMappedType(src reflect.Type) string {
 		return _BOOLEAN
 	case reflect.Interface:
 		return _ANY
+	case reflect.Map:
+		return _RECORD
 	case reflect.Struct:
 		if src == reflect.TypeOf(time.Time{}) {
 			return _STRING
