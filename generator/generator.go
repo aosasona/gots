@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/aosasona/gots/config"
 	"github.com/aosasona/gots/parser"
@@ -77,5 +78,5 @@ func (g *Generator) generateObjectType(src reflect.Type) string {
 		result += fmt.Sprintf("%s%s%s: %s;\n", TAB, p.Name, p.OptionalChar, p.Type)
 	}
 
-	return fmt.Sprintf("{\n%s\n}", result)
+	return fmt.Sprintf("{\n%s%s\n}", TAB, strings.TrimSpace(result))
 }

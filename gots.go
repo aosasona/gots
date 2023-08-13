@@ -18,6 +18,10 @@ type gots struct {
 var (
 	New = Init
 
+	// for convenience
+	String = helper.String
+	Bool   = helper.Bool
+
 	ErrNoSources = errors.New("no sources provided")
 )
 

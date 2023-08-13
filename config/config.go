@@ -20,7 +20,7 @@ const (
 type Config struct {
 	Enabled           *bool   // can be used to disable or enable the generation of types, defaults to false
 	OutputFile        *string // if nil, will default to types.ts in the current directory
-	UseTypeForObjects *bool   // if true, will use `type Foo = ...` instead of `interface Foo {...}`
+	UseTypeForObjects *bool   // if true, will use `type Foo = ...` instead of `interface Foo {...}`, defaults to true
 	ExpandObjectTypes *bool   // if true, will expand object types instead of just using the name (e.g foo: { bar: string } instead of foo: Bar)
 	Case              Case    // to be implemented later
 }
@@ -52,7 +52,7 @@ func (c Config) ExpandObjectTypesOrDefault() bool {
 
 func (c Config) UseTypeForObjectsOrDefault() bool {
 	if c.UseTypeForObjects == nil {
-		return false
+		return true
 	}
 
 	return *c.UseTypeForObjects
