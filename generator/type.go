@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aosasona/gots/config"
-	"github.com/aosasona/gots/parser"
-	"github.com/aosasona/gots/parser/tag"
+	"github.com/aosasona/gots/v2/config"
+	"github.com/aosasona/gots/v2/parser"
+	"github.com/aosasona/gots/v2/parser/tag"
 )
 
 type TypeGenerator struct {

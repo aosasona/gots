@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aosasona/gots/config"
-	"github.com/aosasona/gots/generator"
-	"github.com/aosasona/gots/helper"
+	"github.com/aosasona/gots/v2/config"
+	"github.com/aosasona/gots/v2/generator"
+	"github.com/aosasona/gots/v2/helper"
 )
 
 type Sources []any

@@ -3,10 +3,10 @@ package parser
 import (
 	"reflect"
 
-	"github.com/aosasona/gots/helper"
-	gotsparser "github.com/aosasona/gots/parser/gots"
-	jsonparser "github.com/aosasona/gots/parser/json"
-	"github.com/aosasona/gots/parser/tag"
+	"github.com/aosasona/gots/v2/helper"
+	gotsparser "github.com/aosasona/gots/v2/parser/gots"
+	jsonparser "github.com/aosasona/gots/v2/parser/json"
+	"github.com/aosasona/gots/v2/parser/tag"
 )
 
 func Parse(field reflect.StructField) (*tag.Tag, error) {

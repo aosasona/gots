@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aosasona/gots"
+	"github.com/aosasona/gots/v2"
 )
 
 type Language string

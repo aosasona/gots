@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aosasona/gots/helper"
-	"github.com/aosasona/gots/parser/tag"
+	"github.com/aosasona/gots/v2/helper"
+	"github.com/aosasona/gots/v2/parser/tag"
 )
 
 func withDefaultString(value string, defaultValue string) string {
