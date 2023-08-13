@@ -22,10 +22,10 @@ type Address struct {
 }
 
 type Person struct {
-	FName string `gots:"name:first_name"`
-	LName string `gots:"name:last_name"`
-	Age   int    `gots:"name:age"`
-	*Address
+	FName     string `gots:"name:first_name"`
+	LName     string `gots:"name:last_name"`
+	Age       int    `gots:"name:age"`
+	Address   `gots:"name:address"`
 	Languages []Language     `gots:"name:languages"`
 	Grades    map[string]int `gots:"name:grades,optional:1"`
 	Tags      Tags           `gots:"name:tags"`
@@ -38,7 +38,7 @@ func main() {
 	start := time.Now()
 	gt := gots.Init(gots.Config{
 		Enabled:           gots.Bool(true),
-		OutputFile:        gots.String("example.ts"),
+		OutputFile:        gots.String("./examples/example.ts"),
 		UseTypeForObjects: gots.Bool(true),
 		ExpandObjectTypes: gots.Bool(true),
 	})
@@ -72,7 +72,7 @@ func main() {
 //     first_name: string;
 //     last_name: string;
 //     age: number;
-//     Address: {
+//     address: {
 //         line_1: string | null;
 //         line_2: string | null;
 //         street: string;

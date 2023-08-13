@@ -41,7 +41,7 @@ func (c Config) EnabledOrDefault() bool {
 
 func (c Config) OutputFileOrDefault() string {
 	if c.OutputFile == nil {
-		return "types.ts"
+		return "./types.ts"
 	}
 
 	return *c.OutputFile
