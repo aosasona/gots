@@ -8,14 +8,6 @@ import (
 	"github.com/aosasona/gots/v2/parser/tag"
 )
 
-func withDefaultString(value string, defaultValue string) string {
-	if value == "" {
-		return defaultValue
-	}
-
-	return value
-}
-
 func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
 	var (
 		tag  = new(tag.Tag)
@@ -69,7 +61,7 @@ func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
 	}
 
 	if name, ok := opts["name"]; ok {
-		tag.Name = withDefaultString(strings.TrimSpace(name), field.Name)
+		tag.Name = helper.WithDefaultString(strings.TrimSpace(name), field.Name)
 	}
 
 	if optional, ok := opts["optional"]; ok {
