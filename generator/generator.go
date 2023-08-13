@@ -73,6 +73,10 @@ func (g *Generator) generateObjectType(src reflect.Type) string {
 			continue
 		}
 
+		if !field.IsExported() || tag.Skip {
+			continue
+		}
+
 		p := makeProperty(field, tg, tag)
 
 		result += fmt.Sprintf("%s%s%s: %s;\n", TAB, p.Name, p.OptionalChar, p.Type)

@@ -9,13 +9,17 @@ type Addr struct {
 }
 
 type Student struct {
-	FirstName string         `json:"first_name"`
-	LastName  string         `json:"last_name"`
-	Age       int            `json:"age"`
-	Email     string         `json:"email"`
-	Contact   []string       `json:"contact"`
-	Grades    map[string]int `json:"grades"`
-	Addr      `json:"address"`
+	FirstName   string         `json:"first_name"`
+	LastName    string         `json:"last_name"`
+	Age         int            `json:"age"`
+	Email       string         `json:"email"`
+	Contact     []string       `json:"contact"`
+	Grades      map[string]int `json:"grades"`
+	unexported  string
+	Ignored     string `json:"-"`
+	IgnoredTS   string `gots:"-"`
+	IgnoredBoth string `json:"-" gots:"-"`
+	Addr        `json:"address"`
 }
 
 func Test_ObjectTypeGeneration(t *testing.T) {
