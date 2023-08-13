@@ -1,6 +1,8 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Debug is a global variable that can be used to enable or disable debug mode
 var Debug = false
@@ -22,12 +24,15 @@ type Config struct {
 	OutputFile        *string // if nil, will default to types.ts in the current directory
 	UseTypeForObjects *bool   // if true, will use `type Foo = ...` instead of `interface Foo {...}`, defaults to true
 	ExpandObjectTypes *bool   // if true, will expand object types instead of just using the name (e.g foo: { bar: string } instead of foo: Bar)
+	PreferUnknown     *bool   // if true, will prefer unknown over any
 	Case              Case    // to be implemented later
 }
 
 func (c Config) EnabledOrDefault() bool {
 	if c.Enabled == nil {
-		fmt.Println("c.Enabled is nil, check your config")
+		if Debug {
+			fmt.Println("c.Enabled is nil, check your config")
+		}
 		return false
 	}
 
@@ -56,6 +61,14 @@ func (c Config) UseTypeForObjectsOrDefault() bool {
 	}
 
 	return *c.UseTypeForObjects
+}
+
+func (c Config) PreferUnknownOrDefault() bool {
+	if c.PreferUnknown == nil {
+		return false
+	}
+
+	return *c.PreferUnknown
 }
 
 func (c Config) CaseOrDefault() Case {

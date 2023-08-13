@@ -192,7 +192,7 @@ func Test_GetTypeWithObjectExpansion(t *testing.T) {
         street?: string;
         city?: string;
         post_code: Capitalize<string>;
-}`),
+    }`),
 		},
 		{
 			Name: "embedded struct (expanded)",
@@ -205,7 +205,7 @@ func Test_GetTypeWithObjectExpansion(t *testing.T) {
         twitter_handle: string;
         blogs: string[];
         hackernews_items: Array<number | null>;
-}`),
+    }`),
 		},
 	}
 
@@ -214,9 +214,9 @@ func Test_GetTypeWithObjectExpansion(t *testing.T) {
 	})
 
 	for _, tt := range tests {
-		got := tg.getType(tt.Source)
+		got := tg.GetFieldType(tt.Source)
 		if got != tt.Expected {
-			t.Errorf("`%s`: got %v, want %v", tt.Name, got, tt.Expected)
+			t.Errorf("`%s`: got\n%v, want\n%v", tt.Name, got, tt.Expected)
 		}
 	}
 }

@@ -37,41 +37,61 @@ It's fairly easy to use, here's how:
 package main
 
 import (
-	"log"
-	"os"
+	"fmt"
 	"time"
 
 	"github.com/aosasona/gots"
+	"github.com/aosasona/gots/config"
 )
 
+type Language string
+
+type Tags map[string]string
+
+type Person struct {
+	FName     string         `gots:"name:first_name"`
+	LName     string         `gots:"name:last_name"`
+	Age       int            `gots:"name:age"`
+	Languages []Language     `gots:"name:languages"`
+	Grades    map[string]int `gots:"name:grades,optional:1"`
+	Tags      Tags           `gots:"name:tags"`
+	CreatedAt time.Time      `gots:"name:created_at"`
+	UpdatedAt *time.Time     `gots:"name:updated_at"`
+	DeletedAt *time.Time     `gots:"name:deleted_at"`
+}
+
 func main() {
-	type Profession string
-
-	type Person struct {
-		firstName  string `ts:"name:first_name"`
-		lastName   string `ts:"name:last_name"`
-		dob        string
-		profession Profession `ts:"name:job,optional:true"`
-		createdAt  time.Time
-		isActive   bool `ts:"name:is_active"`
-	}
-
-	type Collection struct {
-		collectionName string   `ts:"name:name"`
-		people         []Person // an array of another struct
-		lead           Person
-	}
-
-	ts := gots.New(gots.Config{
-		Enabled:           true,           // you can use this to disable generation
-		OutputFile:        "./index.d.ts", // this is where your generated file will be saved
-		UseTypeForObjects: false,          // if you want to use `type X = ...` instead of `interface X ...`
+	gt := gots.Init(config.Config{
+		Enabled:           gots.Bool(true),
+		OutputFile:        gots.String("example.ts"),
+		UseTypeForObjects: gots.Bool(true),
 	})
 
-	// registering multiple types at once
-	err := ts.Register(*new(Profession), Person{}, Collection{})
+	// Individually
+	gt.AddSource(*new(Language))
+	gt.AddSource(Tags{})
+	gt.AddSource(Person{})
+
+	out, err := gt.Generate()
 	if err != nil {
-		log.Fatalf("error: %s\n", err.Error())
+		fmt.Println(err)
+		return
+	}
+
+	// save to file and clean the struct
+	err = gt.Commit(out)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// As a group - also saves to the file
+	gt.Register(*new(Language), Tags{}, Person{})
+
+	err := gt.Execute(true)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 }
 ```
@@ -89,7 +109,7 @@ It is safer to enable gots in development only, you can do this however way you 
 
 ```go
 ...
-ts := gots.New(gots.Config{
+ts := gots.Init(gots.Config{
 	Enabled: os.Getenv("ENV") == "development",
 })
 ...
@@ -97,4 +117,4 @@ ts := gots.New(gots.Config{
 
 ## Contribution
 
-PRs and issues are welcome. You can find me on Twiter at [@trulyao](https://twitter.com/trulyao)
+PRs and issues are welcome :)

@@ -209,7 +209,7 @@ func (tg *TypeGenerator) expandObjectType(src reflect.Type) TSType {
 			fields = append(fields, fmt.Sprintf("%s%s%s: %s", TAB+TAB, p.Name, p.OptionalChar, p.Type))
 		}
 	}
-	return TSType(fmt.Sprintf("{\n%s;\n}", strings.Join(fields, ";\n")))
+	return TSType(fmt.Sprintf("{\n%s;\n%s}", strings.Join(fields, ";\n"), TAB))
 }
 
 func (tg *TypeGenerator) handleDefault(src reflect.StructField) TSType {
