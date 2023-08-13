@@ -96,6 +96,10 @@ func (g *gots) Commit(output string) error {
 }
 
 func (g *gots) Generate() (string, error) {
+	if !g.config.EnabledOrDefault() {
+		return "", nil
+	}
+
 	var output string
 
 	if len(g.sources) == 0 {
