@@ -13,9 +13,10 @@ type Tag struct {
 }
 
 type Address struct {
-	Street   string `ts:"name:street,optional:1"`
-	City     string `json:"city,omitempty"`
-	Postcode string `gots:"name:post_code,type:Capitalize<string>"`
+	FlatNumber int    `json:"flat_number,string"`
+	Street     string `ts:"name:street,optional:1"`
+	City       string `json:"city,omitempty"`
+	Postcode   string `gots:"name:post_code,type:Capitalize<string>"`
 }
 
 type SocialMedia struct {
@@ -189,6 +190,7 @@ func Test_GetTypeWithObjectExpansion(t *testing.T) {
 				Type: reflect.TypeOf(p.Address),
 			},
 			Expected: TSType(`{
+        flat_number: string;
         street?: string;
         city?: string;
         post_code: Capitalize<string>;
