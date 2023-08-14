@@ -28,7 +28,7 @@ Gots is not designed or built to be or ever be 100% accurate, just enough to hav
 Just paste this in your terminal (I promise it's safe):
 
 ```bash
-go get -u github.com/aosasona/gots
+go get -u github.com/aosasona/gots/v2
 ```
 
 # Usage

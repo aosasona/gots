@@ -8,13 +8,16 @@ import (
 )
 
 type TestStruct struct {
-	Name       string `json:"first_name"`
-	OmitEmpty  string `json:",omitempty"`
-	ShouldSkip string `json:"-"`
-	Invalid    string `json:"invalid,omitempty,invalid"`
-	Default    string `json:""`
-	Tagless    string
-	Formed     string `json:"formed,omitempty"`
+	Name         string `json:"first_name"`
+	OmitEmpty    string `json:",omitempty"`
+	ShouldSkip   string `json:"-"`
+	Invalid      string `json:"invalid,omitempty,invalid"`
+	Default      string `json:""`
+	Tagless      string
+	Formed       string `json:"formed,omitempty"`
+	AsStr        string `json:",string"`
+	Dash         string `json:"-,"`
+	WithNameOnly string `json:"name,"`
 }
 
 var testStruct = reflect.TypeOf(TestStruct{})
@@ -29,6 +32,9 @@ func TestJSONTagParser_Parse(t *testing.T) {
 	defaultField, ok := testStruct.FieldByName("Default")
 	taglessField, ok := testStruct.FieldByName("Tagless")
 	propertlyFormedField, ok := testStruct.FieldByName("Formed")
+	asStrField, ok := testStruct.FieldByName("AsStr")
+	dashField, ok := testStruct.FieldByName("Dash")
+	withNameOnlyField, ok := testStruct.FieldByName("WithNameOnly")
 
 	if !ok {
 		panic("field not found")
@@ -105,16 +111,47 @@ func TestJSONTagParser_Parse(t *testing.T) {
 				Optional:     true,
 			},
 		},
+		{
+			Name:   "properly handle string tag",
+			Source: asStrField,
+			Expected: &tag.Tag{
+				OriginalName: "AsStr",
+				Name:         "AsStr",
+				Skip:         false,
+				Optional:     false,
+				Type:         "string",
+			},
+		},
+		{
+			Name:   "properly handle dash as name tag",
+			Source: dashField,
+			Expected: &tag.Tag{
+				OriginalName: "Dash",
+				Name:         "-",
+				Skip:         false,
+				Optional:     false,
+			},
+		},
+		{
+			Name:   "properly handle tag with name only and empty second pair",
+			Source: withNameOnlyField,
+			Expected: &tag.Tag{
+				OriginalName: "WithNameOnly",
+				Name:         "name",
+				Skip:         false,
+				Optional:     false,
+			},
+		},
 	}
 
 	for _, test := range tests {
 		got, err := Parse(test.Source)
 		if (err != nil) != test.WantErr {
-			t.Errorf("failed to run case `%s`: unexpected error: %v", test.Name, err)
+			t.Errorf("`%s`: unexpected error: %v", test.Name, err)
 		}
 
 		if !reflect.DeepEqual(got, test.Expected) {
-			t.Errorf("failed to run case `%s`: expected %+v, got %+v", test.Name, test.Expected, got)
+			t.Errorf("`%s`: expected %+v, got %+v", test.Name, test.Expected, got)
 		}
 	}
 }
