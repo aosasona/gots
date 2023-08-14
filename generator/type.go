@@ -228,9 +228,11 @@ func makeProperty(field reflect.StructField, tg *TypeGenerator, tag *tag.Tag) Pr
 	if tag.Name != "" {
 		p.Name = tag.Name
 	}
+
 	if tag.Optional {
 		p.OptionalChar = "?"
 	}
+
 	if tag.Type != "" {
 		p.Type = TSType(tag.Type)
 	}

@@ -48,8 +48,8 @@ func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
 	if len(values) > 1 {
 		if strings.TrimSpace(values[1]) == "omitempty" {
 			tag.Optional = true
-		} else if strings.TrimSpace(values[1]) == "" {
-			return nil, fmt.Errorf("expected omitempty or nothing, got %s", values[1])
+		} else if strings.TrimSpace(values[1]) == "string" {
+			tag.Type = "string"
 		}
 	}
 
