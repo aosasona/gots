@@ -1,3 +1,6 @@
+> [!WARNING]
+> This package has been renamed and because of that, development has moved [here](https://github.com/aosasona/mirror). This repo has been archived to prevent breaking your current usage.
+
 ![gots](./assets/gots.png)
 
 ## So, what is gots?
