@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aosasona/gots/v2/config"
-	"github.com/aosasona/gots/v2/parser"
+	"go.trulyao.dev/gots/config"
+	"go.trulyao.dev/gots/parser"
 )
 
 // acts as a tab "character" for formatting purposes in the generated code (4 spaces)

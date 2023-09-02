@@ -1,3 +1,3 @@
-module github.com/aosasona/gots/v2
+module go.trulyao.dev/gots
 
 go 1.20

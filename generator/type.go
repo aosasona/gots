@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aosasona/gots/v2/config"
-	"github.com/aosasona/gots/v2/parser"
-	"github.com/aosasona/gots/v2/parser/tag"
+	"go.trulyao.dev/gots/config"
+	"go.trulyao.dev/gots/parser"
+	"go.trulyao.dev/gots/parser/tag"
 )
 
 type TypeGenerator struct {

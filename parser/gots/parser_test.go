@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aosasona/gots/v2/parser/tag"
+	"go.trulyao.dev/gots/parser/tag"
 )
 
 type TestStruct struct {

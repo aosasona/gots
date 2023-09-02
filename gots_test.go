@@ -3,7 +3,7 @@ package gots
 import (
 	"testing"
 
-	"github.com/aosasona/gots/v2/config"
+	"go.trulyao.dev/gots/config"
 )
 
 func Test_Fork(t *testing.T) {

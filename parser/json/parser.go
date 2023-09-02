@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aosasona/gots/v2/helper"
-	"github.com/aosasona/gots/v2/parser/tag"
+	"go.trulyao.dev/gots/helper"
+	"go.trulyao.dev/gots/parser/tag"
 )
 
 func Parse(field reflect.StructField, targetTag ...*tag.Tag) (*tag.Tag, error) {
